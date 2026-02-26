@@ -327,7 +327,7 @@ function OnboardingContent() {
       </div>
 
       <p style={{ textAlign: 'center', color: '#333', fontSize: '0.75rem', marginTop: 40 }}>
-        Need help? <a href="mailto:hello@brieflytics.com" style={{ color: '#475569' }}>hello@brieflytics.com</a>
+        Need help? <a href="mailto:panamadonne@proton.me" style={{ color: '#475569' }}>panamadonne@proton.me</a>
       </p>
     </main>
   );

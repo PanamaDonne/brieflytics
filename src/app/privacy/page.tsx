@@ -9,8 +9,8 @@ export default function PrivacyPage() {
           { title: 'What we collect', body: 'Brieflytics collects anonymous pageview data including: page URLs, referrer sources, device type, browser, operating system, screen size, and approximate country/city derived from IP address. We do not store IP addresses — they are used only to determine approximate location and are immediately discarded.' },
           { title: 'What we do not collect', body: 'We do not use cookies. We do not track individual users across sessions. We do not store personally identifiable information about your website visitors. We do not sell any data to third parties.' },
           { title: 'Data storage', body: 'All data is stored in the European Union (Frankfurt, Germany) on Supabase infrastructure. We are fully GDPR compliant. No consent banner is required on your website because we do not use cookies or collect personal data.' },
-          { title: 'Your data', body: 'You own your analytics data. You can request deletion of your account and all associated data at any time by emailing hello@brieflytics.com.' },
-          { title: 'Contact', body: 'Questions? Email us at hello@brieflytics.com.' },
+          { title: 'Your data', body: 'You own your analytics data. You can request deletion of your account and all associated data at any time by emailing panamadonne@proton.me.' },
+          { title: 'Contact', body: 'Questions? Email us at panamadonne@proton.me.' },
         ].map(({ title, body }) => (
           <div key={title} style={{ marginBottom: 36 }}>
             <h2 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 10 }}>{title}</h2>

@@ -728,6 +728,12 @@ export default function Home() {
           >
             Privacy Policy
           </a>
+          <a href="mailto:panamadonne@proton.me" style={{ color: "#475569", fontSize: "0.8rem", textDecoration: "none" }}
+            onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.color = "#94a3b8"}
+            onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.color = "#475569"}
+          >
+            Support
+          </a>
         </div>
       </footer>
 
