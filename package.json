@@ -1,0 +1,32 @@
+{
+  "name": "brieflytics",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Privacy-first web analytics — delivered via Telegram or email. No dashboard.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "report": "ts-node --project tsconfig.scripts.json scripts/generate-report.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.43.0",
+    "next": "14.2.3",
+    "openai": "^4.52.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "resend": "^3.3.0",
+    "stripe": "^16.2.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
+  }
+}
