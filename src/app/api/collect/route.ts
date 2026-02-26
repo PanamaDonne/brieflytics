@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { supabaseAdmin } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import { parseUserAgent } from "@/lib/ua-parser";
 import { resolveGeo } from "@/lib/geo";
 import type { CollectPayload } from "@/types";
@@ -56,6 +56,8 @@ export async function OPTIONS() {
 // ─────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
+  const supabase = getSupabaseAdmin();
+
   // ── 1. Parse body ──────────────────────────
   let body: unknown;
   try {
@@ -73,7 +75,7 @@ export async function POST(req: NextRequest) {
   const payload = parsed.data as CollectPayload;
 
   // ── 3. Verify site token ───────────────────
-  const { data: site, error: siteErr } = await supabaseAdmin
+  const { data: site, error: siteErr } = await supabase
     .from("sites")
     .select("id, domain, owner_id")
     .eq("token", payload.t)
@@ -85,7 +87,7 @@ export async function POST(req: NextRequest) {
   }
 
   // ── 3b. Check subscription status ──────────
-  const { data: subActive } = await supabaseAdmin
+  const { data: subActive } = await supabase
     .rpc("is_account_active", { subscriber_id: site.owner_id });
 
   if (!subActive) {
@@ -128,7 +130,7 @@ export async function POST(req: NextRequest) {
   // ── 7. Store pageview or custom event ──────
   if (payload.e) {
     // Custom event
-    const { error } = await supabaseAdmin.from("events").insert({
+    const { error } = await supabase.from("events").insert({
       site_id: site.id,
       session_id: payload.s,
       event_name: payload.e,
@@ -143,7 +145,7 @@ export async function POST(req: NextRequest) {
     }
   } else {
     // Pageview
-    const { error } = await supabaseAdmin.from("pageviews").insert({
+    const { error } = await supabase.from("pageviews").insert({
       site_id: site.id,
       session_id: payload.s,
       url: payload.u,
@@ -168,7 +170,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Mark entry/exit pages via DB function
-    await supabaseAdmin.rpc("update_entry_exit", {
+    await supabase.rpc("update_entry_exit", {
       p_site_id: site.id,
       p_session_id: payload.s,
       p_url: payload.u,

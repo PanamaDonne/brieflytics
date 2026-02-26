@@ -38,8 +38,8 @@ export default function SignupPage() {
         return;
       }
 
-      const { token, siteId } = data as { token: string; siteId: string };
-      router.push(`/onboarding?token=${encodeURIComponent(token)}&siteId=${encodeURIComponent(siteId)}`);
+      const { token, siteId, subscriberId } = data as { token: string; siteId: string; subscriberId: string };
+      router.push(`/onboarding?token=${encodeURIComponent(token)}&siteId=${encodeURIComponent(siteId)}&subscriberId=${encodeURIComponent(subscriberId)}`);
     } catch {
       setError('Network error. Please check your connection and try again.');
     } finally {

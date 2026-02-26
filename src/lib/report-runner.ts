@@ -9,7 +9,7 @@
  *   5. Deliver via Telegram and/or email per subscriber preference
  */
 
-import { supabaseAdmin } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import { aggregateStats } from "@/lib/stats";
 import { generateSummary } from "@/lib/summarize";
 import { sendReportToTelegram } from "@/lib/telegram";
@@ -31,8 +31,10 @@ export interface ReportResult {
 export async function generateAndDeliverReport(
   siteId?: string
 ): Promise<ReportResult[]> {
+  const supabase = getSupabaseAdmin();
+
   // ── 1. Fetch sites ──────────────────────────
-  let query = supabaseAdmin
+  let query = supabase
     .from("sites")
     .select("id, domain, name, owner_id");
 
@@ -59,6 +61,7 @@ export async function generateAndDeliverReport(
 }
 
 async function runSiteReport(site: Site): Promise<ReportResult> {
+  const supabase = getSupabaseAdmin();
   console.log(`[report-runner] Generating report for ${site.domain}...`);
 
   try {
@@ -68,7 +71,7 @@ async function runSiteReport(site: Site): Promise<ReportResult> {
     periodStart.setDate(periodStart.getDate() - 7);
 
     // ── Fetch subscriber ──────────────────────
-    const { data: subscriber, error: subErr } = await supabaseAdmin
+    const { data: subscriber, error: subErr } = await supabase
       .from("subscribers")
       .select("*")
       .eq("id", site.owner_id)
@@ -81,7 +84,7 @@ async function runSiteReport(site: Site): Promise<ReportResult> {
     const sub = subscriber as Subscriber;
 
     // ── Check account is active ───────────────
-    const { data: isActive } = await supabaseAdmin
+    const { data: isActive } = await supabase
       .rpc("is_account_active", { subscriber_id: sub.id });
 
     if (!isActive) {
@@ -113,7 +116,7 @@ async function runSiteReport(site: Site): Promise<ReportResult> {
     // ── Save report to DB ─────────────────────
     const deliveredVia: ("telegram" | "email")[] = [];
 
-    const { data: reportRow, error: reportErr } = await supabaseAdmin
+    const { data: reportRow, error: reportErr } = await supabase
       .from("reports")
       .insert({
         site_id: site.id,
@@ -158,7 +161,7 @@ async function runSiteReport(site: Site): Promise<ReportResult> {
     }
 
     // ── Update delivered_via in DB ─────────────
-    await supabaseAdmin
+    await supabase
       .from("reports")
       .update({ delivered_via: deliveredVia })
       .eq("id", report.id);

@@ -17,11 +17,24 @@ function OnboardingContent() {
   const params = useSearchParams();
   const token = params.get('token') ?? '';
   const siteId = params.get('siteId') ?? '';
+  const subscriberId = params.get('subscriberId') ?? '';
 
   const embedCode = `<script defer src="https://brieflytics.com/tracker.js" data-token="${token}"></script>`;
 
   const [copied, setCopied] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
+
+  // Email delivery state
+  const [emailInput, setEmailInput] = useState('');
+  const [emailSaving, setEmailSaving] = useState(false);
+  const [emailSaved, setEmailSaved] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
+
+  // Domain update state
+  const [domainInput, setDomainInput] = useState('');
+  const [domainSaving, setDomainSaving] = useState(false);
+  const [domainSaved, setDomainSaved] = useState(false);
+  const [domainError, setDomainError] = useState<string | null>(null);
 
   function markDone(step: number) {
     setCompletedSteps(prev => new Set(Array.from(prev).concat(step)));
@@ -47,7 +60,65 @@ function OnboardingContent() {
     }
   }
 
+  async function saveDomain() {
+    if (!domainInput.trim() || !siteId) return;
+    setDomainSaving(true);
+    setDomainError(null);
+    try {
+      const res = await fetch('/api/site/update-domain', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ siteId, domain: domainInput.trim() }),
+      });
+      const data = await res.json() as { ok?: boolean; error?: string };
+      if (!res.ok) {
+        setDomainError(data.error ?? 'Failed to save domain.');
+      } else {
+        setDomainSaved(true);
+      }
+    } catch {
+      setDomainError('Network error. Please try again.');
+    } finally {
+      setDomainSaving(false);
+    }
+  }
+
+  async function useEmail() {
+    if (!emailInput.trim()) return;
+    if (!subscriberId) {
+      setEmailError('Missing subscriber ID. Please refresh and try again.');
+      return;
+    }
+    setEmailSaving(true);
+    setEmailError(null);
+    try {
+      const res = await fetch('/api/subscriber/update-delivery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subscriberId,
+          email: emailInput.trim(),
+          deliveryPreference: 'email',
+        }),
+      });
+      const data = await res.json() as { ok?: boolean; error?: string };
+      if (!res.ok) {
+        setEmailError(data.error ?? 'Failed to save email.');
+      } else {
+        setEmailSaved(true);
+        markDone(2);
+      }
+    } catch {
+      setEmailError('Network error. Please try again.');
+    } finally {
+      setEmailSaving(false);
+    }
+  }
+
   const stepDone = (n: number) => completedSteps.has(n);
+  const telegramLink = token
+    ? `https://t.me/BrieflyticsBOT?start=${encodeURIComponent(token)}`
+    : 'https://t.me/BrieflyticsBOT';
 
   return (
     <main style={{
@@ -147,10 +218,60 @@ function OnboardingContent() {
               cursor: 'pointer',
               transition: 'background 0.2s',
               fontFamily: "'Inter', sans-serif",
+              marginBottom: 20,
             }}
           >
             {copied ? '✓ Copied to clipboard!' : '📋 Copy embed code'}
           </button>
+
+          {/* Domain update input */}
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 18 }}>
+            <div style={{ color: '#64748b', fontSize: '0.82rem', marginBottom: 10 }}>
+              Enter your website URL so we track the right domain:
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <input
+                type="text"
+                placeholder="https://yoursite.com"
+                value={domainInput}
+                onChange={e => setDomainInput(e.target.value)}
+                disabled={domainSaved}
+                style={{
+                  flex: 1,
+                  background: '#080808',
+                  border: '1px solid #2a2a2a',
+                  borderRadius: 8,
+                  padding: '10px 14px',
+                  color: '#fff',
+                  fontSize: '0.88rem',
+                  fontFamily: "'Inter', sans-serif",
+                  opacity: domainSaved ? 0.6 : 1,
+                }}
+              />
+              <button
+                onClick={saveDomain}
+                disabled={domainSaving || domainSaved || !domainInput.trim()}
+                style={{
+                  padding: '10px 18px',
+                  background: domainSaved ? '#059669' : '#1e293b',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: 8,
+                  color: domainSaved ? '#fff' : '#94a3b8',
+                  fontWeight: 600,
+                  fontSize: '0.85rem',
+                  cursor: domainSaving || domainSaved || !domainInput.trim() ? 'not-allowed' : 'pointer',
+                  whiteSpace: 'nowrap',
+                  fontFamily: "'Inter', sans-serif",
+                  transition: 'background 0.2s',
+                }}
+              >
+                {domainSaved ? '✓ Saved!' : domainSaving ? 'Saving…' : 'Save domain'}
+              </button>
+            </div>
+            {domainError && (
+              <p style={{ color: '#f87171', fontSize: '0.8rem', marginTop: 6 }}>{domainError}</p>
+            )}
+          </div>
         </div>
 
         {/* ── Step 2 ── */}
@@ -179,7 +300,7 @@ function OnboardingContent() {
           </div>
 
           <a
-            href="https://t.me/BrieflyticsBOT"
+            href={telegramLink}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => markDone(2)}
@@ -216,7 +337,9 @@ function OnboardingContent() {
             <input
               type="email"
               placeholder="your@email.com"
-              defaultValue=""
+              value={emailInput}
+              onChange={e => setEmailInput(e.target.value)}
+              disabled={emailSaved}
               style={{
                 flex: 1,
                 background: '#080808',
@@ -226,26 +349,32 @@ function OnboardingContent() {
                 color: '#fff',
                 fontSize: '0.9rem',
                 fontFamily: "'Inter', sans-serif",
+                opacity: emailSaved ? 0.6 : 1,
               }}
             />
             <button
-              onClick={() => markDone(2)}
+              onClick={useEmail}
+              disabled={emailSaving || emailSaved || !emailInput.trim()}
               style={{
                 padding: '11px 18px',
-                background: '#1e293b',
+                background: emailSaved ? '#059669' : '#1e293b',
                 border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: 8,
-                color: '#94a3b8',
+                color: emailSaved ? '#fff' : '#94a3b8',
                 fontWeight: 600,
                 fontSize: '0.85rem',
-                cursor: 'pointer',
+                cursor: emailSaving || emailSaved || !emailInput.trim() ? 'not-allowed' : 'pointer',
                 whiteSpace: 'nowrap',
                 fontFamily: "'Inter', sans-serif",
+                transition: 'background 0.2s',
               }}
             >
-              Use email
+              {emailSaved ? '✓ Email saved!' : emailSaving ? 'Saving…' : 'Use email'}
             </button>
           </div>
+          {emailError && (
+            <p style={{ color: '#f87171', fontSize: '0.8rem', marginTop: 6 }}>{emailError}</p>
+          )}
         </div>
 
         {/* ── Step 3 ── */}

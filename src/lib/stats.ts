@@ -6,7 +6,7 @@
  * Returns a ReportStats object ready for AI summarization.
  */
 
-import { supabaseAdmin } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import type { ReportStats } from "@/types";
 
 /**
@@ -18,6 +18,7 @@ export async function aggregateStats(
   from: Date,
   to: Date
 ): Promise<ReportStats> {
+  const supabase = getSupabaseAdmin();
   const fromISO = from.toISOString();
   const toISO = to.toISOString();
 
@@ -38,7 +39,7 @@ export async function aggregateStats(
     sessionDurationResult,
   ] = await Promise.all([
     // Total pageviews
-    supabaseAdmin
+    supabase
       .from("pageviews")
       .select("id", { count: "exact", head: true })
       .eq("site_id", siteId)
@@ -46,7 +47,7 @@ export async function aggregateStats(
       .lte("timestamp", toISO),
 
     // Unique visitors (distinct session_ids as proxy)
-    supabaseAdmin
+    supabase
       .from("pageviews")
       .select("session_id")
       .eq("site_id", siteId)
@@ -54,7 +55,7 @@ export async function aggregateStats(
       .lte("timestamp", toISO),
 
     // Sessions (same as unique visitors for now — one session_id per session)
-    supabaseAdmin
+    supabase
       .from("pageviews")
       .select("session_id")
       .eq("site_id", siteId)
@@ -62,7 +63,7 @@ export async function aggregateStats(
       .lte("timestamp", toISO),
 
     // Top pages
-    supabaseAdmin.rpc("top_pages", {
+    supabase.rpc("top_pages", {
       p_site_id: siteId,
       p_from: fromISO,
       p_to: toISO,
@@ -70,7 +71,7 @@ export async function aggregateStats(
     }),
 
     // Top referrers
-    supabaseAdmin.rpc("top_referrers", {
+    supabase.rpc("top_referrers", {
       p_site_id: siteId,
       p_from: fromISO,
       p_to: toISO,
@@ -78,7 +79,7 @@ export async function aggregateStats(
     }),
 
     // Top countries
-    supabaseAdmin.rpc("top_countries", {
+    supabase.rpc("top_countries", {
       p_site_id: siteId,
       p_from: fromISO,
       p_to: toISO,
@@ -86,21 +87,21 @@ export async function aggregateStats(
     }),
 
     // Device breakdown
-    supabaseAdmin.rpc("device_breakdown", {
+    supabase.rpc("device_breakdown", {
       p_site_id: siteId,
       p_from: fromISO,
       p_to: toISO,
     }),
 
     // Browser breakdown
-    supabaseAdmin.rpc("browser_breakdown", {
+    supabase.rpc("browser_breakdown", {
       p_site_id: siteId,
       p_from: fromISO,
       p_to: toISO,
     }),
 
     // Entry pages
-    supabaseAdmin
+    supabase
       .from("pageviews")
       .select("url")
       .eq("site_id", siteId)
@@ -109,7 +110,7 @@ export async function aggregateStats(
       .lte("timestamp", toISO),
 
     // Exit pages
-    supabaseAdmin
+    supabase
       .from("pageviews")
       .select("url")
       .eq("site_id", siteId)
@@ -118,7 +119,7 @@ export async function aggregateStats(
       .lte("timestamp", toISO),
 
     // Custom events
-    supabaseAdmin.rpc("top_events", {
+    supabase.rpc("top_events", {
       p_site_id: siteId,
       p_from: fromISO,
       p_to: toISO,
@@ -126,7 +127,7 @@ export async function aggregateStats(
     }),
 
     // Bounce count
-    supabaseAdmin
+    supabase
       .from("pageviews")
       .select("session_id")
       .eq("site_id", siteId)
@@ -135,7 +136,7 @@ export async function aggregateStats(
       .lte("timestamp", toISO),
 
     // Session durations (for avg calculation)
-    supabaseAdmin.rpc("avg_session_duration", {
+    supabase.rpc("avg_session_duration", {
       p_site_id: siteId,
       p_from: fromISO,
       p_to: toISO,
