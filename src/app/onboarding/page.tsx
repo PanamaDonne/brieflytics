@@ -117,8 +117,8 @@ function OnboardingContent() {
 
   const stepDone = (n: number) => completedSteps.has(n);
   const telegramLink = token
-    ? `https://t.me/BrieflyticsBOT?start=${encodeURIComponent(token)}`
-    : 'https://t.me/BrieflyticsBOT';
+    ? `https://t.me/Brieflytics_bot?start=${encodeURIComponent(token)}`
+    : 'https://t.me/Brieflytics_bot';
 
   return (
     <main style={{
