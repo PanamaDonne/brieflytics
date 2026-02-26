@@ -84,14 +84,20 @@ export async function POST(req: NextRequest) {
     // Subscriber was created — return partial success with no token
     return NextResponse.json({
       subscriberId: subscriber.id,
+      siteId: null,
       token: null,
+      embedCode: null,
     });
   }
+
+  const embedCode = `<script defer src="https://brieflytics.com/tracker.js" data-token="${site.token}"></script>`;
 
   return NextResponse.json(
     {
       subscriberId: subscriber.id,
+      siteId: site.id,
       token: site.token,
+      embedCode,
     },
     { status: 201 }
   );
