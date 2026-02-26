@@ -8,8 +8,7 @@
 import { Resend } from "resend";
 import type { Report, Site } from "@/types";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM = process.env.RESEND_FROM_EMAIL ?? "reports@brieflytics.app";
+const FROM = process.env.RESEND_FROM_EMAIL ?? "hello@brieflytics.com";
 
 /** Send a formatted analytics report via email */
 export async function sendReportByEmail(
@@ -17,6 +16,11 @@ export async function sendReportByEmail(
   site: Site,
   report: Report
 ): Promise<void> {
+  if (!process.env.RESEND_API_KEY) {
+    console.warn("RESEND_API_KEY not set — skipping email delivery");
+    return;
+  }
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const stats = report.raw_stats;
   const periodStart = new Date(report.period_start);
   const periodEnd = new Date(report.period_end);
