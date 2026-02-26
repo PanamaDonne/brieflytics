@@ -82,6 +82,11 @@ export interface Subscriber {
   delivery_preference: "telegram" | "email" | "both";
   plan: "free" | "supporter";
   stripe_customer_id: string | null;
+  trial_started_at: string | null;
+  trial_ends_at: string | null;
+  subscription_status: "trial" | "active" | "expired" | "cancelled";
+  stripe_subscription_id: string | null;
+  stripe_price_id: string | null;
   created_at: string;
 }
 

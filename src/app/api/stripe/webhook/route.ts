@@ -3,18 +3,15 @@ export const dynamic = 'force-dynamic';
 /**
  * POST /api/stripe/webhook
  *
- * Handles Stripe webhook events for:
- *   - checkout.session.completed → one-time tip received
- *   - customer.subscription.created/updated → supporter tier activated
- *   - customer.subscription.deleted → supporter tier cancelled
- *
- * Stripe sends a signature in the stripe-signature header.
- * We verify it before processing any event.
+ * Handles Stripe webhook events for trial → subscription lifecycle:
+ *   - checkout.session.completed → activate subscription
+ *   - customer.subscription.updated → sync status
+ *   - customer.subscription.deleted → mark cancelled
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { supabaseAdmin } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-06-20",
@@ -48,21 +45,19 @@ export async function POST(req: NextRequest) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        // Handle one-time tip — log it, maybe send a thank-you message
-        await handleTipReceived(session);
+        await handleCheckoutCompleted(session);
         break;
       }
 
-      case "customer.subscription.created":
       case "customer.subscription.updated": {
         const sub = event.data.object as Stripe.Subscription;
-        await handleSubscriptionChange(sub, "active");
+        await handleSubscriptionUpdated(sub);
         break;
       }
 
       case "customer.subscription.deleted": {
         const sub = event.data.object as Stripe.Subscription;
-        await handleSubscriptionChange(sub, "cancelled");
+        await handleSubscriptionDeleted(sub);
         break;
       }
 
@@ -83,38 +78,95 @@ export async function POST(req: NextRequest) {
 // Event handlers
 // ─────────────────────────────────────────────
 
-async function handleTipReceived(session: Stripe.Checkout.Session) {
+/**
+ * checkout.session.completed
+ * Subscriber completed payment — activate their subscription.
+ */
+async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+  const subscriberId = session.metadata?.subscriber_id;
+
+  if (!subscriberId) {
+    console.warn("[stripe/webhook] checkout.session.completed missing subscriber_id in metadata");
+    return;
+  }
+
   const customerId = session.customer as string;
-  const amount = session.amount_total ?? 0;
-  const currency = session.currency ?? "eur";
+  const subscriptionId = session.subscription as string;
 
-  console.log(
-    `[stripe/webhook] Tip received: ${(amount / 100).toFixed(2)} ${currency.toUpperCase()} from customer ${customerId}`
-  );
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase
+    .from("subscribers")
+    .update({
+      subscription_status: "active",
+      stripe_customer_id: customerId,
+      stripe_subscription_id: subscriptionId,
+      plan: "supporter",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", subscriberId);
 
-  // You could: store a tip record, send a thank-you Telegram message, etc.
-  // For now, just log it.
+  if (error) {
+    throw new Error(`Failed to activate subscriber ${subscriberId}: ${error.message}`);
+  }
+
+  console.log(`[stripe/webhook] ✅ Subscriber ${subscriberId} activated — customer: ${customerId}`);
 }
 
-async function handleSubscriptionChange(
-  subscription: Stripe.Subscription,
-  status: "active" | "cancelled"
-) {
+/**
+ * customer.subscription.updated
+ * Sync subscription status when Stripe status changes (renewal, past_due, etc.)
+ */
+async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   const customerId = subscription.customer as string;
-  const plan = status === "active" ? "supporter" : "free";
+  const stripeStatus = subscription.status;
 
-  const { error } = await supabaseAdmin
+  let subscriptionStatus: string;
+  if (stripeStatus === "active" || stripeStatus === "trialing") {
+    subscriptionStatus = "active";
+  } else if (stripeStatus === "past_due" || stripeStatus === "unpaid") {
+    subscriptionStatus = "expired";
+  } else {
+    // canceled, incomplete, incomplete_expired, paused — don't change
+    console.log(`[stripe/webhook] Ignoring subscription.updated with status: ${stripeStatus}`);
+    return;
+  }
+
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase
     .from("subscribers")
-    .update({ plan })
+    .update({
+      subscription_status: subscriptionStatus,
+      updated_at: new Date().toISOString(),
+    })
     .eq("stripe_customer_id", customerId);
 
   if (error) {
-    throw new Error(
-      `Failed to update subscriber plan for ${customerId}: ${error.message}`
-    );
+    throw new Error(`Failed to update subscriber for customer ${customerId}: ${error.message}`);
   }
 
-  console.log(
-    `[stripe/webhook] Subscriber ${customerId} plan → ${plan}`
-  );
+  console.log(`[stripe/webhook] Subscriber ${customerId} subscription_status → ${subscriptionStatus}`);
+}
+
+/**
+ * customer.subscription.deleted
+ * Subscription was fully cancelled.
+ */
+async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
+  const customerId = subscription.customer as string;
+
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase
+    .from("subscribers")
+    .update({
+      subscription_status: "cancelled",
+      plan: "free",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("stripe_customer_id", customerId);
+
+  if (error) {
+    throw new Error(`Failed to cancel subscriber for customer ${customerId}: ${error.message}`);
+  }
+
+  console.log(`[stripe/webhook] Subscriber ${customerId} subscription_status → cancelled`);
 }

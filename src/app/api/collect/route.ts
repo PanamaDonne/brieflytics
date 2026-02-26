@@ -75,13 +75,28 @@ export async function POST(req: NextRequest) {
   // ── 3. Verify site token ───────────────────
   const { data: site, error: siteErr } = await supabaseAdmin
     .from("sites")
-    .select("id, domain")
+    .select("id, domain, owner_id")
     .eq("token", payload.t)
     .single();
 
   if (siteErr || !site) {
     // Return 200 to prevent token enumeration — silently drop
     return respond(200, "ok");
+  }
+
+  // ── 3b. Check subscription status ──────────
+  const { data: subActive } = await supabaseAdmin
+    .rpc("is_account_active", { subscriber_id: site.owner_id });
+
+  if (!subActive) {
+    // Silent drop — don't break client sites, just stop collecting
+    return NextResponse.json(
+      { ok: false, reason: "trial_expired" },
+      {
+        status: 200,
+        headers: { "Access-Control-Allow-Origin": "*" },
+      }
+    );
   }
 
   // Optional: validate the URL's origin matches the registered domain

@@ -80,6 +80,20 @@ async function runSiteReport(site: Site): Promise<ReportResult> {
 
     const sub = subscriber as Subscriber;
 
+    // ── Check account is active ───────────────
+    const { data: isActive } = await supabaseAdmin
+      .rpc("is_account_active", { subscriber_id: sub.id });
+
+    if (!isActive) {
+      console.log(`[report-runner] ⏭ Skipping ${site.domain} — account inactive (trial expired or cancelled)`);
+      return {
+        site_id: site.id,
+        domain: site.domain,
+        success: false,
+        error: "account_inactive",
+      };
+    }
+
     // ── Aggregate stats ───────────────────────
     const stats: ReportStats = await aggregateStats(
       site.id,
