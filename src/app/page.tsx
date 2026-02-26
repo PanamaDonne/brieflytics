@@ -328,7 +328,7 @@ export default function Home() {
           height: 64,
         }}>
           <Logo />
-          <a href="#pricing" style={{
+          <a href="/signup" style={{
             padding: "8px 18px",
             border: "1.5px solid rgba(255,255,255,0.25)",
             borderRadius: 8,
@@ -402,7 +402,7 @@ export default function Home() {
 
           {/* CTAs */}
           <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 64 }}>
-            <a href="#pricing" style={{
+            <a href="/signup" style={{
               display: "inline-flex",
               alignItems: "center",
               gap: 6,
@@ -782,7 +782,7 @@ export default function Home() {
               ))}
             </div>
 
-            <a href="#" style={{
+            <a href="/signup" style={{
               display: "block",
               padding: "15px 0",
               background: "#0ea5e9",
