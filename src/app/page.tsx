@@ -5,6 +5,178 @@
  * Dark theme, inline styles, no external dependencies
  */
 
+import { useState } from 'react';
+
+// ─── JSON-LD Structured Data ──────────────────────────────────────────────────
+
+const jsonLdApp = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Brieflytics",
+  "description": "Privacy-first web analytics that delivers plain English reports and AI growth suggestions via Telegram or email. No dashboard, no cookies, EU-hosted.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "url": "https://brieflytics.com",
+  "offers": {
+    "@type": "Offer",
+    "price": "5.00",
+    "priceCurrency": "USD",
+    "priceSpecification": {
+      "@type": "RecurringCharge",
+      "billingPeriod": "Month"
+    }
+  },
+  "featureList": [
+    "No cookies",
+    "GDPR compliant",
+    "EU-hosted",
+    "Plain English reports",
+    "AI growth suggestions",
+    "Telegram delivery",
+    "Email delivery",
+    "No dashboard required"
+  ]
+};
+
+const jsonLdFaq = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Does Brieflytics use cookies?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Brieflytics is completely cookieless. No cookies are set, no consent banner is required, and you remain fully GDPR compliant." }
+    },
+    {
+      "@type": "Question",
+      "name": "Where is my data stored?",
+      "acceptedAnswer": { "@type": "Answer", "text": "All data is stored in the EU (Frankfurt, Germany). We never transfer data outside the EU." }
+    },
+    {
+      "@type": "Question",
+      "name": "How does Brieflytics work?",
+      "acceptedAnswer": { "@type": "Answer", "text": "You embed one line of JavaScript on your website. Brieflytics tracks visitor data anonymously and sends you a plain English summary with AI-powered growth suggestions via Telegram or email every week." }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need a credit card to start?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. You get a 14-day free trial with no credit card required. After 14 days, it's $5/month." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Brieflytics a Google Analytics alternative?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Brieflytics is a privacy-friendly alternative to Google Analytics. Unlike Google Analytics, it uses no cookies, requires no consent banner, stores data in the EU, and delivers insights directly to your phone instead of requiring you to log in to a dashboard." }
+    }
+  ]
+};
+
+// ─── FAQ Accordion Component ──────────────────────────────────────────────────
+
+const faqItems = [
+  {
+    q: "Does Brieflytics use cookies?",
+    a: "No. Brieflytics is completely cookieless. No cookies are set, no consent banner is required, and you remain fully GDPR compliant.",
+  },
+  {
+    q: "Where is my data stored?",
+    a: "All data is stored in the EU (Frankfurt, Germany). We never transfer data outside the EU.",
+  },
+  {
+    q: "Do I need a credit card to start?",
+    a: "No. You get a 14-day free trial with no credit card required. After 14 days, it's $5/month. Cancel anytime.",
+  },
+  {
+    q: "Is this a Google Analytics alternative?",
+    a: "Yes. Brieflytics is a privacy-friendly alternative to Google Analytics. Unlike GA, it uses no cookies, requires no consent banner, stores data in the EU, and delivers insights directly to your phone.",
+  },
+  {
+    q: "How do I receive my reports?",
+    a: "You choose: Telegram message or email. Reports arrive weekly (or daily), plain English, straight to your phone. No logins, no dashboards.",
+  },
+];
+
+function FAQAccordion() {
+  const [open, setOpen] = useState<number | null>(null);
+
+  return (
+    <section style={{ padding: "0 24px 96px" }}>
+      <div style={{ maxWidth: 720, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 48 }}>
+          <h2 style={{
+            fontSize: "clamp(1.8rem, 4vw, 2.4rem)",
+            fontWeight: 800,
+            letterSpacing: "-0.03em",
+            margin: "0 0 14px",
+          }}>
+            Frequently asked questions
+          </h2>
+          <p style={{ color: "#64748b", fontSize: "1rem", margin: 0 }}>Everything you need to know before you start.</p>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {faqItems.map((item, i) => (
+            <div
+              key={i}
+              style={{
+                background: "#0f1721",
+                border: `1px solid ${open === i ? "rgba(14,165,233,0.3)" : "rgba(255,255,255,0.07)"}`,
+                borderRadius: 14,
+                overflow: "hidden",
+                transition: "border-color 0.2s",
+              }}
+            >
+              <button
+                onClick={() => setOpen(open === i ? null : i)}
+                style={{
+                  width: "100%",
+                  background: "none",
+                  border: "none",
+                  padding: "20px 24px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  gap: 16,
+                }}
+              >
+                <span style={{ fontSize: "0.95rem", fontWeight: 600, color: "#fff", lineHeight: 1.4 }}>{item.q}</span>
+                <span style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: "50%",
+                  background: open === i ? "rgba(14,165,233,0.15)" : "rgba(255,255,255,0.06)",
+                  border: `1px solid ${open === i ? "rgba(14,165,233,0.3)" : "rgba(255,255,255,0.1)"}`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                  fontSize: "1.1rem",
+                  color: open === i ? "#0ea5e9" : "#64748b",
+                  transition: "all 0.2s",
+                  fontWeight: 300,
+                }}>
+                  {open === i ? "−" : "+"}
+                </span>
+              </button>
+              {open === i && (
+                <div style={{
+                  padding: "0 24px 20px",
+                  color: "#94a3b8",
+                  fontSize: "0.9rem",
+                  lineHeight: 1.7,
+                }}>
+                  {item.a}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Logo Component ──────────────────────────────────────────────────────────
 
 function BrieflyticsMark() {
@@ -127,6 +299,16 @@ const styles = {
 export default function Home() {
   return (
     <div style={styles.page}>
+
+      {/* ── JSON-LD Structured Data ──────────────────────────────────────── */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdApp) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFaq) }}
+      />
 
       {/* ── Nav ─────────────────────────────────────────────────────────── */}
       <nav style={{
@@ -704,6 +886,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── FAQ ──────────────────────────────────────────────────────────── */}
+      <FAQAccordion />
 
       {/* ── Footer ───────────────────────────────────────────────────────── */}
       <footer style={{

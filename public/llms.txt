@@ -1,0 +1,40 @@
+# Brieflytics
+
+> The analytics tool that talks to you.
+
+Brieflytics is a privacy-first web analytics platform that sends plain English summaries and AI-powered growth suggestions directly to your Telegram or email. There is no dashboard to log into.
+
+## What it does
+- Tracks website visitors, pageviews, traffic sources, devices, and countries
+- Generates weekly or daily plain English analytics reports
+- Provides AI-generated growth suggestions based on your data
+- Delivers reports via Telegram message or email
+
+## Key features
+- No cookies — fully cookieless tracking
+- GDPR compliant — no consent banner required
+- EU-hosted — all data stored in Frankfurt, Germany
+- No dashboard — everything delivered as a message
+- One-line embed — single script tag, no npm required
+- $5/month — 14-day free trial, no credit card required
+
+## How to use
+1. Sign up at https://brieflytics.com/signup (email only, no card)
+2. Embed one line of code on your website
+3. Connect Telegram or use email for report delivery
+4. Receive weekly plain English reports with growth tips
+
+## Pricing
+$5/month after a 14-day free trial. No credit card required to start. Cancel anytime.
+
+## Privacy
+- No cookies or persistent identifiers
+- IP addresses used only for geolocation, then immediately discarded
+- Data stored in EU (Frankfurt, Germany)
+- Compliant with GDPR and ePrivacy Directive
+
+## Links
+- Homepage: https://brieflytics.com
+- Sign up: https://brieflytics.com/signup
+- Privacy policy: https://brieflytics.com/privacy
+- Support: panamadonne@proton.me
