@@ -91,7 +91,7 @@ const faqItems = [
   },
   {
     q: "How do I receive my reports?",
-    a: "You choose: Telegram message or email. Reports arrive weekly (or daily), plain English, straight to your phone. No logins, no dashboards.",
+    a: "You choose: Telegram message or email. Reports arrive every 3 days, plain English, straight to your phone. No logins, no dashboards.",
   },
 ];
 
@@ -489,7 +489,7 @@ export default function Home() {
                 color: "#e2e8f0",
                 maxWidth: 340,
               }}>
-                <div style={{ fontWeight: 700, color: "#fff", marginBottom: 6 }}>📊 brieflytics.com — Weekly Report</div>
+                <div style={{ fontWeight: 700, color: "#fff", marginBottom: 6 }}>📊 brieflytics.com — 3-Day Report</div>
                 <div>843 visitors this week <span style={{ color: "#4ade80" }}>↑ 12%</span> from last week</div>
                 <div style={{ color: "#94a3b8", marginTop: 4 }}>Top sources: Google (44%), Reddit (29%), Direct</div>
                 <div style={{ color: "#94a3b8" }}>71% mobile · Top country: 🇩🇪 Germany</div>
@@ -612,7 +612,7 @@ export default function Home() {
               letterSpacing: "-0.03em",
               margin: "0 0 14px",
             }}>
-              Your weekly briefing, delivered
+              Your 3-day briefing, delivered
             </h2>
             <p style={{ color: "#64748b", fontSize: "1rem", margin: 0 }}>Here&apos;s exactly what you&apos;ll receive every week.</p>
           </div>
@@ -659,7 +659,7 @@ export default function Home() {
                 color: "#e2e8f0",
               }}>
                 <div style={{ fontWeight: 800, fontSize: "0.95rem", color: "#fff", marginBottom: 12, paddingBottom: 10, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-                  📊 brieflytics.com — Weekly Report
+                  📊 brieflytics.com — 3-Day Report
                 </div>
 
                 <div style={{ marginBottom: 12 }}>
@@ -760,7 +760,7 @@ export default function Home() {
 
             <div style={{ textAlign: "left", marginBottom: 36, display: "flex", flexDirection: "column", gap: 12 }}>
               {[
-                "Weekly + daily analytics reports",
+                "Reports every 3 days",
                 "Telegram & email delivery",
                 "AI-powered growth suggestions",
                 "Unlimited pageviews",

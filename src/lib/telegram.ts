@@ -1,7 +1,7 @@
 /**
  * Telegram Delivery Service
  *
- * Formats and sends weekly analytics reports to a Telegram chat.
+ * Formats and sends 3-day analytics reports to a Telegram chat.
  * Uses the Telegram Bot API directly — no extra libraries needed.
  *
  * Message format uses Telegram MarkdownV2 so it renders cleanly
@@ -58,7 +58,7 @@ function formatReportMessage(site: Site, report: Report): string {
 
   // Build lines — escape special chars for MarkdownV2
   const lines: string[] = [
-    `📊 *${esc(site.name)}* Weekly Report`,
+    `📊 *${esc(site.name)}* 3-Day Report`,
     `_${esc(period)}_`,
     ``,
     `*Core Metrics*`,

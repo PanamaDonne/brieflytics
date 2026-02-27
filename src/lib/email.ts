@@ -1,7 +1,7 @@
 /**
  * Email Delivery Service (via Resend)
  *
- * Sends weekly analytics reports as well-formatted HTML emails.
+ * Sends 3-day analytics reports as well-formatted HTML emails.
  * Uses Resend for reliable transactional email delivery.
  */
 
@@ -29,7 +29,7 @@ export async function sendReportByEmail(
   const { error } = await resend.emails.send({
     from: `Brieflytics Analytics <${FROM}>`,
     to: [toEmail],
-    subject: `📊 ${site.name} Weekly Report — ${period}`,
+    subject: `📊 ${site.name} 3-Day Report — ${period}`,
     html: buildEmailHtml(site, report, period),
     text: buildEmailText(site, report, period),
   });
@@ -74,14 +74,14 @@ function buildEmailHtml(site: Site, report: Report, period: string): string {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
-  <title>Brieflytics Weekly Report</title>
+  <title>Brieflytics 3-Day Report</title>
 </head>
 <body style="margin:0;padding:0;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
   <div style="max-width:600px;margin:32px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
     
     <!-- Header -->
     <div style="background:#111;padding:32px 40px;">
-      <div style="font-size:13px;color:#888;margin-bottom:4px;">Weekly Analytics Report</div>
+      <div style="font-size:13px;color:#888;margin-bottom:4px;">3-Day Analytics Report</div>
       <h1 style="margin:0;color:#fff;font-size:24px;">${escHtml(site.name)}</h1>
       <div style="color:#aaa;margin-top:4px;font-size:14px;">${escHtml(period)}</div>
     </div>
@@ -160,7 +160,7 @@ function metricCard(label: string, value: string): string {
 function buildEmailText(site: Site, report: Report, period: string): string {
   const stats = report.raw_stats;
   return `
-${site.name} — Weekly Analytics Report
+${site.name} — 3-Day Analytics Report
 ${period}
 
 CORE METRICS

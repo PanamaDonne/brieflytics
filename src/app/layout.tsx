@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -46,7 +47,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <Script
+          src="https://brieflytics.com/tracker.js"
+          data-token="c4669b624ed687fc0cecc2d57a87472d"
+          strategy="afterInteractive"
+        />
+      </body>
     </html>
   );
 }
