@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 /**
  * POST /api/signup
  *
- * Registers a new subscriber with a 14-day free trial.
+ * Registers a new subscriber with a 7-day free trial.
  * Creates a default site record and returns the subscriber ID + site token.
  *
  * No credit card required to start.
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
 
   const now = new Date();
   const trialEndsAt = new Date(now);
-  trialEndsAt.setDate(trialEndsAt.getDate() + 14);
+  trialEndsAt.setDate(trialEndsAt.getDate() + 7);
 
   // ── Create subscriber ──────────────────────
   const { data: subscriber, error: subErr } = await supabase

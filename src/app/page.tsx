@@ -60,7 +60,7 @@ const jsonLdFaq = {
     {
       "@type": "Question",
       "name": "Do I need a credit card to start?",
-      "acceptedAnswer": { "@type": "Answer", "text": "No. You get a 14-day free trial with no credit card required. After 14 days, it's $5/month." }
+      "acceptedAnswer": { "@type": "Answer", "text": "No. You get a 7-day free trial with no credit card required. After 7 days, pay $5 once for lifetime access." }
     },
     {
       "@type": "Question",
@@ -83,7 +83,7 @@ const faqItems = [
   },
   {
     q: "Do I need a credit card to start?",
-    a: "No. You get a 14-day free trial with no credit card required. After 14 days, it's $5/month. Cancel anytime.",
+    a: "No. You get a 7-day free trial with no credit card required. After 7 days, pay $5 once for lifetime access. Lifetime access.",
   },
   {
     q: "Is this a Google Analytics alternative?",
@@ -386,7 +386,7 @@ export default function Home() {
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",
           }}>
-            The analytics tool<br />that talks to you.
+            Analytics for founders<br />who don’t have time for dashboards.
           </h1>
 
           {/* Subheading */}
@@ -397,7 +397,7 @@ export default function Home() {
             margin: "0 auto 40px",
             maxWidth: 560,
           }}>
-            No dashboards. No logins. Plain English reports delivered straight to your phone.
+            Brieflytics talks to you every 3 days with plain-English insights and AI plays so you can know your site in 60 seconds and get back to shipping.
           </p>
 
           {/* CTAs */}
@@ -490,7 +490,7 @@ export default function Home() {
                 maxWidth: 340,
               }}>
                 <div style={{ fontWeight: 700, color: "#fff", marginBottom: 6 }}>📊 brieflytics.com — 3-Day Report</div>
-                <div>843 visitors this week <span style={{ color: "#4ade80" }}>↑ 12%</span> from last week</div>
+                <div>843 visitors last 3 days <span style={{ color: "#4ade80" }}>↑ 12%</span> vs previous 3 days</div>
                 <div style={{ color: "#94a3b8", marginTop: 4 }}>Top sources: Google (44%), Reddit (29%), Direct</div>
                 <div style={{ color: "#94a3b8" }}>71% mobile · Top country: 🇩🇪 Germany</div>
                 <div style={{ color: "#94a3b8" }}>Drop-off: Pricing page</div>
@@ -526,7 +526,7 @@ export default function Home() {
           gap: "clamp(12px, 3vw, 32px)",
           flexWrap: "wrap",
         }}>
-          {["🇪🇺 EU-hosted", "🍪 No cookies", "🔒 GDPR compliant", "✕ Cancel anytime"].map(item => (
+          {["🇪🇺 EU-hosted", "🍪 No cookies", "🔒 GDPR compliant", "✕ Lifetime access"].map(item => (
             <span key={item} style={{ whiteSpace: "nowrap" }}>{item}</span>
           ))}
         </div>
@@ -664,7 +664,7 @@ export default function Home() {
 
                 <div style={{ marginBottom: 12 }}>
                   <div style={{ color: "#94a3b8", fontSize: "0.72rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>Traffic</div>
-                  <div><span style={{ fontWeight: 700, color: "#fff", fontSize: "1.2rem" }}>843</span> <span style={{ color: "#94a3b8" }}>visitors this week</span> <span style={{ color: "#4ade80", fontWeight: 700 }}>↑ 12%</span></div>
+                  <div><span style={{ fontWeight: 700, color: "#fff", fontSize: "1.2rem" }}>843</span> <span style={{ color: "#94a3b8" }}>visitors last 3 days</span> <span style={{ color: "#4ade80", fontWeight: 700 }}>↑ 12%</span></div>
                 </div>
 
                 <div style={{ marginBottom: 12 }}>
@@ -751,11 +751,11 @@ export default function Home() {
 
             <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 4, marginBottom: 8 }}>
               <span style={{ fontSize: "3.5rem", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1 }}>$5</span>
-              <span style={{ color: "#64748b", paddingBottom: 8 }}>/month</span>
+              <span style={{ color: "#64748b", paddingBottom: 8 }}>one-time</span>
             </div>
 
             <div style={{ color: "#64748b", fontSize: "0.85rem", marginBottom: 36 }}>
-              14-day free trial · No credit card required
+              7-day free trial · No credit card required
             </div>
 
             <div style={{ textAlign: "left", marginBottom: 36, display: "flex", flexDirection: "column", gap: 12 }}>
@@ -766,7 +766,7 @@ export default function Home() {
                 "Unlimited pageviews",
                 "EU-hosted, GDPR compliant",
                 "No cookies, no consent banners",
-                "Cancel anytime",
+                "Lifetime access",
               ].map(feature => (
                 <div key={feature} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
                   <span style={{
@@ -807,7 +807,7 @@ export default function Home() {
               Start your free trial →
             </a>
 
-            <p style={{ margin: "14px 0 0", color: "#475569", fontSize: "0.78rem" }}>No credit card · Cancel anytime · Starts immediately</p>
+            <p style={{ margin: "14px 0 0", color: "#475569", fontSize: "0.78rem" }}>No credit card · Lifetime access · Starts immediately</p>
           </div>
         </div>
       </section>

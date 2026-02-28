@@ -81,7 +81,7 @@ export default function SignupPage() {
             Start your free trial
           </h1>
           <p style={{ color: '#64748b', fontSize: '0.9rem', margin: '0 0 10px' }}>
-            14 days free · No credit card required · $5/mo after
+            7 days free · No credit card required · $5 lifetime after
           </p>
           <p style={{ color: '#475569', fontSize: '0.82rem', margin: 0, fontStyle: 'italic' }}>
             Join founders and developers tracking their sites with Brieflytics

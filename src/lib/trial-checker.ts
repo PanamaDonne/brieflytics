@@ -59,7 +59,7 @@ export async function checkExpiringTrials(): Promise<{ processed: number; errors
       const checkoutLink = `${APP_URL}/api/checkout-redirect?subscriberId=${row.id}`;
 
       const message =
-        `⏰ Your Brieflytics trial has ended\\. Add a card to keep your analytics running → [Upgrade now](${checkoutLink})`;
+        `⏰ Your Brieflytics trial has ended\\. Get lifetime access for just $5 → [Get lifetime access](${checkoutLink})`;
 
       // 3. Send notification — prefer Telegram, fall back to email
       if (row.telegram_chat_id) {
@@ -107,10 +107,10 @@ async function sendTrialExpiredEmail(email: string, subscriberId: string): Promi
       subject: "⏰ Your Brieflytics trial has ended",
       html: `
         <p>Hi there,</p>
-        <p>Your 14-day free trial has ended.</p>
+        <p>Your 7-day free trial has ended.</p>
         <p>
           <a href="${checkoutLink}" style="display:inline-block;background:#0ea5e9;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;">
-            Add a card to keep your analytics running →
+            Get lifetime access for just $5 →
           </a>
         </p>
         <p>It's just $5/month — cancel any time.</p>

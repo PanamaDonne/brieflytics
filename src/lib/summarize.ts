@@ -36,23 +36,23 @@ export async function generateSummary(
   // Build a concise, structured prompt — no PII, just aggregates
   const statsBlock = formatStatsForPrompt(stats);
 
-  const systemPrompt = `You are an analytics assistant for a website owner. 
-Your job is to write clear, friendly, and actionable analytics reports.
-Keep the tone conversational but professional. Be specific with numbers.
-Avoid jargon. The audience is a non-technical business owner.`;
+  const systemPrompt = `You are an analytics assistant for a busy indie founder.
+Your job is to surface what changed, why it matters, and what to do next.
+Always compare to the previous period when the data allows it. If numbers are zero, call it out.
+Sound confident and direct. Avoid filler. Be specific with numbers and channels.`;
 
   const userPrompt = `Here are the analytics stats for ${siteName} (${siteDomain}) for the period ${period}:
 
 ${statsBlock}
 
 Please provide:
-1. SUMMARY: A 3–5 sentence plain-English summary of the week. Highlight the most important trends.
-2. SUGGESTIONS: 3 specific, actionable growth suggestions based on this data.
+1. SUMMARY: 2-4 sentences that explain what changed (up or down), what caused it (source/page/device), and whether it needs action. Reference specific numbers and deltas when possible.
+2. SUGGESTIONS: Return an array of 3 concrete, high-leverage actions (JSON array of strings). Each suggestion should reference the metric or insight that triggered it.
 
 Format your response as JSON:
 {
   "summary": "...",
-  "suggestions": "..."
+  "suggestions": ["suggestion 1", "suggestion 2", "suggestion 3"]
 }`;
 
   const response = await openai.chat.completions.create({
@@ -71,12 +71,26 @@ Format your response as JSON:
     throw new Error("OpenAI returned an empty response");
   }
 
-  const parsed = JSON.parse(content) as { summary?: string; suggestions?: string };
+  const parsed = JSON.parse(content) as { summary?: string; suggestions?: unknown };
+  const suggestionsList = normalizeSuggestions(parsed.suggestions);
 
   return {
     summary: parsed.summary ?? "Summary unavailable.",
-    suggestions: parsed.suggestions ?? "No suggestions available.",
+    suggestions: suggestionsList.length ? suggestionsList.map((item, idx) => `${idx + 1}. ${item}`).join("\n") : "No suggestions available.",
   };
+}
+
+function normalizeSuggestions(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+  if (typeof value === "string") {
+    return value
+      .split(/\r?\n/)
+      .map((line) => line.replace(/^[-•\d\.\s]+/, "").trim())
+      .filter(Boolean);
+  }
+  return [];
 }
 
 // ─────────────────────────────────────────────

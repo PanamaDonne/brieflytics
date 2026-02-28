@@ -411,7 +411,7 @@ function OnboardingContent() {
             lineHeight: 1.65,
             marginBottom: 20,
           }}>
-            <span style={{ color: '#7dd3fc', fontWeight: 600 }}>📊 Your first report arrives in 7 days.</span>
+            <span style={{ color: '#7dd3fc', fontWeight: 600 }}>📊 Your first report arrives in 3 days.</span>
             {' '}We&apos;ll message you with a summary of your traffic, top sources, and AI-powered suggestions to grow.
           </div>
 

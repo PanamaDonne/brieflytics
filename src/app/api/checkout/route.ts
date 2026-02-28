@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
-      mode: "subscription",
+      mode: "payment",
       line_items: [
         {
           price: process.env.STRIPE_PRICE_ID!,

@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: 'Brieflytics — The analytics tool that talks to you.',
-  description: 'No dashboards. No logins. Brieflytics sends plain English reports + AI growth tips straight to your Telegram or email. EU-hosted, GDPR compliant, no cookies. $5/mo.',
+  description: 'No dashboards. No logins. Brieflytics sends plain English reports + AI growth tips straight to your Telegram or email. EU-hosted, GDPR compliant, no cookies. $5 lifetime.',
   keywords: ['web analytics', 'privacy analytics', 'cookieless analytics', 'GDPR analytics', 'Google Analytics alternative', 'EU analytics', 'no dashboard analytics'],
   authors: [{ name: 'Brieflytics' }],
   creator: 'Brieflytics',

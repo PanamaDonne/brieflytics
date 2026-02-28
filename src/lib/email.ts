@@ -132,7 +132,9 @@ function buildEmailHtml(site: Site, report: Report, period: string): string {
     <!-- Growth Suggestions -->
     <div style="padding:28px 40px 32px;">
       <h2 style="margin:0 0 12px;font-size:16px;text-transform:uppercase;letter-spacing:0.05em;color:#444;">💡 Growth Suggestions</h2>
-      <p style="margin:0;color:#333;line-height:1.7;font-size:15px;white-space:pre-line;">${escHtml(report.suggestions)}</p>
+      <ul style="margin:0;color:#333;line-height:1.7;font-size:15px;padding-left:20px;">
+        ${parseSuggestions(report.suggestions).map((item) => `<li>${escHtml(item)}</li>`).join("\n")}
+      </ul>
     </div>
 
     <!-- Footer -->
@@ -180,7 +182,7 @@ AI SUMMARY
 ${report.summary}
 
 GROWTH SUGGESTIONS
-${report.suggestions}
+${parseSuggestions(report.suggestions).map((item, idx) => `${idx + 1}. ${item}`).join("\n")}
 
 —
 Brieflytics Analytics · Privacy-first · EU-hosted · No cookies
@@ -209,3 +211,19 @@ function formatDuration(seconds: number): string {
   const s = Math.round(seconds % 60);
   return `${m}m ${s}s`;
 }
+
+function parseSuggestions(raw: string): string[] {
+  try {
+    const maybe = JSON.parse(raw);
+    if (Array.isArray(maybe)) {
+      return maybe.map((item) => String(item));
+    }
+  } catch (err) {
+    // not JSON
+  }
+  return raw
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
